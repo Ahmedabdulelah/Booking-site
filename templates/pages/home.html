@@ -22,7 +22,10 @@
 <!-- المشكلة في انو ماف ملف للصور نزل مع المشروع -->
 
 		<!-- <img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}" alt="Front Photo of Musical Band" /> -->
-		<img id="front-splash" src="{% set static_url = url_for('static', filename='img/front-splash.jpg') %}{{ static_url }}" alt="Front Photo of Musical Band" />
+		<!-- <img id="front-splash" src="{% set static_url = url_for('static', filename='img/front-splash.jpg') %}{{ static_url }}" alt="Front Photo of Musical Band" /> -->
+		{% set static_url = url_for('static', filename='img/front-splash.jpg') %}
+		<img id="front-splash" src="{{ static_url }}" alt="Front Photo of Musical Band" />
+		
 
 	</div>
 </div>
