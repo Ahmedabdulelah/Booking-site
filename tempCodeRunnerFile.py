@@ -1,1 +1,1 @@
-self
+An error occurred. Venue ' + venue.name + ' could not be listed.
