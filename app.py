@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------------#
 
 import json
-import dateutil.parser
+# import dateutil.parser
 # import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
 from flask_moment import Moment
@@ -53,13 +53,13 @@ class Venue(db.Model):
 
 
     artist = db.relationship('Artist' , secondary = 'shows')
-    show_relation = db.relationship('Show', backref='venue')
+    show_relation = db.relationship('Show', backref='shows')
     
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     def __repr__(self):
-      return f"<Information Venue {self.id} {self.name} {self.address} {self.phone}>"
+      return f"<Information Venue {self.id} {self.name}>"
 
 
 
@@ -80,7 +80,7 @@ class Artist(db.Model):
 
 
     venue = db.relationship('Venue' , secondary = 'shows')
-    show_relation = db.relationship('Show' , backref = 'artist')
+    show_relation = db.relationship('Show' , backref = 'shows')
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -95,8 +95,8 @@ class Show(db.Model):
     venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
     start_time = db.Column(db.DateTime())
 
-    venue_relation = db.relationship('Venue', backref='shows')
-    artist_relation = db.relationship('Artist',backref ='shows')
+    venue_relation = db.relationship('Venue', backref='shows',overlaps = 'artist,show_relation,venue')
+    artist_relation = db.relationship('Venue',backref ='artist',overlaps ='artist,show_relation')
 
     
     #   def __init__(self, artist_id, venue_id, start_time):
@@ -369,6 +369,7 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   error = False
+  venue = None
   try:
     venue = Venue()
     venue.name = request.form['name']
@@ -381,20 +382,22 @@ def create_venue_submission():
     venue.image_link = request.form['image_link']
     venue.facebook_link = request.form['facebook_link'] 
     venue.website = request.form['website']
-    venue.seeking_talent = request.form['seeking_talent']
+    venue.seeking_talent =bool(request.form['seeking_talent'])
+    # venue.seeking_talent = request.form['seeking_talent']
     # venue.seeking_talent = True if request.form['seeking_talent'] == 'True' else False
     venue.seeking_description = request.form['seeking_description']
     db.session.add(venue)
     db.session.commit()
-    print(e)
-  except SQLAlchemyError as e:
+  except:
     error = True
     db.session.rollback()
-    print(str(e)) 
+    print(sys.exc_info())
   finally:
     db.session.close()
     if error :
-      flash('An error occurred. Venue ' + venue.name + ' could not be listed.')
+      # flash('An error occurred. Venue ' + venue.name + ' could not be listed.')
+      flash('An error occurred. Venue ' + (venue.name if venue else '') + ' could not be listed.')
+
     else:
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
   # TODO: modify data to be the data object returned from db insertion
