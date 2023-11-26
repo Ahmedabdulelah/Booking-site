@@ -79,7 +79,7 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(120))
 
 
-    venue = db.relationship('Venue' , secondary = 'shows')
+    venue = db.relationship('Venue' , secondary = 'shows',overlaps='artsit,show_relation,shows')
     show_relation = db.relationship('Show' , backref = 'shows')
 
 
