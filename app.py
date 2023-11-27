@@ -48,12 +48,12 @@ class Venue(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     website = db.Column(db.String(120))
-    seeking_talent = db.Column(db.Boolean,nullable = False,default = False)
+    seeking_talent = db.Column(db.Boolean,default = False)
     seeking_description = db.Column(db.String(120))
 
 
-    artist = db.relationship('Artist' , secondary = 'shows')
-    show_relation = db.relationship('Show', backref='shows')
+    artists = db.relationship('Artist' , secondary = 'shows')
+    show_relation = db.relationship('Show', backref=('venues'))
     
 
 
@@ -79,8 +79,8 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(120))
 
 
-    venue = db.relationship('Venue' , secondary = 'shows',overlaps='artsit,show_relation,shows')
-    show_relation = db.relationship('Show' , backref = 'shows')
+    venues = db.relationship('Venue' , secondary = 'shows')
+    show_relation = db.relationship('Show' , backref = ('artists'))
 
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -95,8 +95,8 @@ class Show(db.Model):
     venue_id = db.Column(db.Integer, db.ForeignKey("venue.id"))
     start_time = db.Column(db.DateTime())
 
-    venue_relation = db.relationship('Venue', backref='shows',overlaps = 'artist,show_relation,venue')
-    artist_relation = db.relationship('Venue',backref ='artist',overlaps ='artist,show_relation')
+    venue_relation = db.relationship('Venue')
+    artist_relation = db.relationship('Artist')
 
     
     #   def __init__(self, artist_id, venue_id, start_time):
@@ -373,8 +373,8 @@ def create_venue_submission():
   try:
     venue = Venue()
     venue.name = request.form['name']
-    venue.state = request.form['state']
     venue.city = request.form['city']
+    venue.state = request.form['state']
     venue.address = request.form['address']
     venue.phone = request.form['phone']
     tmp_genres = request.form.getlist('genres')
@@ -388,16 +388,14 @@ def create_venue_submission():
     venue.seeking_description = request.form['seeking_description']
     db.session.add(venue)
     db.session.commit()
-  except:
+  except Exception as e: 
     error = True
     db.session.rollback()
-    print(sys.exc_info())
+    print(e)
   finally:
     db.session.close()
     if error :
-      # flash('An error occurred. Venue ' + venue.name + ' could not be listed.')
       flash('An error occurred. Venue ' + (venue.name if venue else '') + ' could not be listed.')
-
     else:
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
   # TODO: modify data to be the data object returned from db insertion

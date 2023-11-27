@@ -1,1 +1,1 @@
-'An error occurred. Venue ' + (venue.name if venue else '') + ' could not be listed.'
+    seeking_talent = db.Column(db.Boolean,nullable = False,default = False)

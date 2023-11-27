@@ -85,9 +85,6 @@ class VenueForm(Form):
     phone = StringField(
         'phone'
     )
-    image_link = StringField(
-        'image_link'
-    )
     genres = SelectMultipleField(
         # TODO implement enum restriction
         'genres', validators=[DataRequired()],
@@ -112,6 +109,9 @@ class VenueForm(Form):
             ('Soul', 'Soul'),
             ('Other', 'Other'),
         ]
+    )
+    image_link = StringField(
+        'image_link'
     )
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
