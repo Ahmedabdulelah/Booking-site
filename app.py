@@ -28,6 +28,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app , db)
 
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:localdb@localhost:5432/booksite'
 
 #----------------------------------------------------------------------------#
@@ -76,8 +77,10 @@ class Artist(db.Model):
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String(120))
 
+
     venues = db.relationship('Venue' , secondary = 'shows')
     show_relation = db.relationship('Show' , backref = ('artists'))
+
 
     def __repr__(self):
       return F"<Information Artist {self.id} {self.name} {self.genres}>"
@@ -93,7 +96,7 @@ class Show(db.Model):
     venue_relation = db.relationship('Venue')
     artist_relation = db.relationship('Artist')
 
-  
+    
 with app.app_context():
   db.create_all()
 
@@ -175,6 +178,7 @@ def search_venues():
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   venue = Venue.query.get(venue_id)
+
   past_show = list(filter(lambda x: x.start_time < datetime.today() , venue.shows))
   upcoming_show = list(filter(lambda x: x.start_time >= datetime.today() , venue.shows))
 
@@ -229,7 +233,6 @@ def create_venue_submission():
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
   return render_template('pages/home.html')
 
-
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   error = False
@@ -255,7 +258,6 @@ def delete_venue(venue_id):
     return redirect(url_for('index'))    
   return None
 
-  
 @app.route('/venues/<int:venue_id>/delete', methods=['POST'])
 def delete_venues(venue_id):
 
@@ -282,7 +284,7 @@ def search_artists():
   response = {}
   response ['count'] = len(search_results)
   response ['data'] = search_results
-
+  
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
@@ -290,6 +292,7 @@ def show_artist(artist_id):
   artist = Artist.query.get(artist_id)
   past_shows = list(filter(lambda x:x.start_time <datetime.today(),artist.shows))
   upcoming_shows = list(filter(lambda x:x.start_time >= datetime.today(),artist.shows))
+
   past_shows = list(map(lambda x:x.show_venue() , past_shows))
   upcoming_shows = list(map(lambda x:x.show_venue(),upcoming_shows))
 
