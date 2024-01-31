@@ -251,8 +251,8 @@ class ArtistForm(Form):
 )
 
 
-    website_link = StringField(
-        'website_link'
+    website = StringField(
+        'website'
     )
 
     seeking_venue = BooleanField( 'seeking_venue' )
