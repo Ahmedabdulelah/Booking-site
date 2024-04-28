@@ -43,6 +43,8 @@ class FacebookLinkEnum(Enum):
     LINK_1 = 'https://www.facebook.com/TheMusicalHop'
     LINK_2 = 'https://www.facebook.com/theduelingpianos'
     LINK_3 = 'https://www.facebook.com/ParkSquareLiveMusicAndCoffee'    
+    LINK_4 = 'https://www.facebook.com/GunsNPetals'    
+    LINK_5 = 'https://www.facebook.com/mattquevedo923251523'    
 
 class VenueForm(Form):
     name = StringField(
