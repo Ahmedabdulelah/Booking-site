@@ -132,9 +132,7 @@ class VenueForm(Form):
     image_link = StringField(
         'image_link'
     )
-    # facebook_link = StringField(
-    #     'facebook_link', validators=[URL()]
-    # )
+
     facebook_link = StringField(
     'facebook_link',
     validators=[
